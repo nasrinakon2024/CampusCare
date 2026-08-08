@@ -5,10 +5,12 @@ const Register = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false); // লোডিং স্টেট যুক্ত করা হলো
     const navigate = useNavigate();
 
     const handleRegister = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try {
             const res = await fetch('https://campuscare-hpcs.onrender.com/api/auth/register', {
                 method: 'POST',
@@ -21,11 +23,13 @@ const Register = () => {
                 alert("Registration Successful! Please login.");
                 navigate('/login');
             } else {
-                alert(data.error || "Registration failed!");
+                alert(data.error || data.message || "Registration failed!");
             }
         } catch (err) {
             console.error("Error:", err);
             alert("Server connection failed!");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -67,7 +71,9 @@ const Register = () => {
                     />
                 </div>
 
-                <button type="submit" className="w-full bg-red-600 hover:bg-red-700 p-3 rounded-xl font-bold transition">Register</button>
+                <button type="submit" disabled={loading} className="w-full bg-red-600 hover:bg-red-700 p-3 rounded-xl font-bold transition disabled:opacity-50">
+                    {loading ? "Registering..." : "Register"}
+                </button>
                 
                 <p className="text-sm text-center text-slate-400 mt-4">
                     Already have an account? <Link to="/login" className="text-red-400 hover:underline">Login</Link>
