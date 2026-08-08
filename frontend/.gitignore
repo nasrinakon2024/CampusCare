@@ -1,0 +1,18 @@
+# Environment variables (সবচেয়ে গুরুত্বপূর্ণ)
+.env
+.env.local
+
+# Dependencies (node_modules গিটহাবে দিতে হয় না)
+node_modules/
+
+# Build files (Vite বা React এর build ফোল্ডার)
+dist/
+build/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
