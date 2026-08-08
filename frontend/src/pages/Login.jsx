@@ -11,7 +11,7 @@ const Login = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await fetch('https://campuscare-hpcs.onrender.com/api/auth/login', {
+            const res = await fetch('https://campuscare-backend-2166.onrender.com/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })

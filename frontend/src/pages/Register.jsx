@@ -12,7 +12,7 @@ const Register = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await fetch('https://campuscare-hpcs.onrender.com/api/auth/register', {
+            const res = await fetch('https://campuscare-backend-2166.onrender.com/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, password })
