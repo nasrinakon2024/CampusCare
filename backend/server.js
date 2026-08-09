@@ -1,10 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const app = express();
-app.use(cors({
-  origin: ["https://campuscare-bd.netlify.app", "http://localhost:5173"],
-  credentials: true
-}));
+const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -12,8 +8,12 @@ require('dotenv').config();
 
 const app = express();
 
+app.use(cors({
+    origin: ["https://campuscare-bd.netlify.app", "http://localhost:5173"],
+    credentials: true
+}));
+
 app.use(express.json());
-app.use(cors());
 
 const uploadDir = path.join(__dirname, 'uploads');
 try {
