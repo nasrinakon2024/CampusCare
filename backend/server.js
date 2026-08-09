@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-
+const app = express();
 app.use(cors({
   origin: ["https://campuscare-bd.netlify.app", "http://localhost:5173"],
   credentials: true
