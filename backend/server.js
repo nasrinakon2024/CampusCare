@@ -2,18 +2,28 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const multer = require('multer');
-const admin = require('firebase-admin');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 require('dotenv').config();
 
-// ফায়ারবেস সার্ভিস অ্যাকাউন্ট কি ফাইল কানেক্ট করা
-const serviceAccount = require('./serviceAccountKey.json');
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET || "your-project-id.appspot.com"
+// ক্লাউডিনারি কনফিগারেশন
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const bucket = admin.storage().bucket();
+// ক্লাউডিনারি স্টোরেজ সেটআপ (ফাইল ও ইমেজ হ্যান্ডেল করার জন্য)
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'campuscare_notes',
+        resource_type: 'auto',
+        allowed_formats: ['jpg', 'png', 'jpeg', 'pdf', 'doc', 'docx']
+    },
+});
+
+const upload = multer({ storage: storage });
 const app = express();
 
 app.use(cors({
@@ -22,9 +32,6 @@ app.use(cors({
 }));
 
 app.use(express.json());
-
-// মেমোরি স্টোরেজ ব্যবহার করা (ফাইল সরাসরি ফায়ারবেসে পাঠানোর জন্য)
-const upload = multer({ storage: multer.memoryStorage() });
 
 mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("MongoDB Connected!"))
@@ -78,27 +85,7 @@ app.post('/api/auth/login', async (req, res) => {
 app.post('/api/notes/add', upload.single('file'), async (req, res) => {
     try {
         const { userId, courseTitle, courseCode, notesContent } = req.body;
-        let fileUrl = '';
-        
-        if (req.file) {
-            const fileName = Date.now() + "_" + req.file.originalname;
-            const fileUpload = bucket.file(fileName);
-
-            const blobStream = fileUpload.createWriteStream({
-                metadata: {
-                    contentType: req.file.mimetype
-                }
-            });
-
-            await new Promise((resolve, reject) => {
-                blobStream.on('error', (error) => reject(error));
-                blobStream.on('finish', async () => {
-                    fileUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
-                    resolve();
-                });
-                blobStream.end(req.file.buffer);
-            });
-        }
+        const fileUrl = req.file ? req.file.path : '';
         
         const newNote = new Note({ 
             userId, 
@@ -129,23 +116,7 @@ app.put('/api/notes/edit/:id', upload.single('file'), async (req, res) => {
         let updateData = { courseTitle, courseCode, notesContent };
         
         if (req.file) {
-            const fileName = Date.now() + "_" + req.file.originalname;
-            const fileUpload = bucket.file(fileName);
-
-            const blobStream = fileUpload.createWriteStream({
-                metadata: {
-                    contentType: req.file.mimetype
-                }
-            });
-
-            await new Promise((resolve, reject) => {
-                blobStream.on('error', (error) => reject(error));
-                blobStream.on('finish', async () => {
-                    updateData.attachment = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
-                    resolve();
-                });
-                blobStream.end(req.file.buffer);
-            });
+            updateData.attachment = req.file.path;
         }
 
         const updatedNote = await Note.findByIdAndUpdate(req.params.id, updateData, { new: true });
