@@ -1,6 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
+
+app.use(cors({
+  origin: ["https://campuscare-bd.netlify.app", "http://localhost:5173"],
+  credentials: true
+}));
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
