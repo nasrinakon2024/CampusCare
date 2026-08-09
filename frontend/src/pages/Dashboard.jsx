@@ -29,7 +29,7 @@ const Dashboard = () => {
         if (!searchTerm.trim()) return;
         setLoading(true);
         try {
-            // Open Library API ব্যবহার করা হলো যা আরও নিখুঁত রেজাল্ট দেয়
+            // Open Library API ব্যবহার করা হলো যা আরও নিখুঁত রেজাল্ট দেয়
             const response = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(searchTerm)}&limit=9`);
             const data = await response.json();
             setBooks(data.docs || []);
@@ -82,7 +82,7 @@ const Dashboard = () => {
                         Search
                     </button>
                 </div>
-                <p className="text-xs text-slate-500 mt-1">বইয়ের নাম বা লেখকের নাম লিখে Search করুন...</p>
+                <p className="text-xs text-slate-500 mt-1">বইয়ের নাম বা লেখকের নাম লিখে Search করুন...</p>
 
                 {/* Loading State */}
                 {loading && (
