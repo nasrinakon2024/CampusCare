@@ -4,14 +4,15 @@ import { useNavigate, Link } from 'react-router-dom';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false); // রেন্ডারের লেট রেসপন্স বোঝার জন্য লোডিং স্টেট
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await fetch('https://campuscare-backend-2166.onrender.com/api/auth/login', {
+            const API_URL = import.meta.env.VITE_API_URL || 'https://campuscare-backend-2l66.onrender.com';
+            const res = await fetch(`${API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
@@ -19,7 +20,6 @@ const Login = () => {
             const data = await res.json();
             
             if (res.ok) {
-                // ব্যাকএন্ড থেকে ডাটা যেভাবে আসুক না কেন (user অবজেক্টসহ বা সরাসরি) সেফলি হ্যান্ডেল করবে
                 const userId = data.user?._id || data._id || data.id;
                 const userName = data.user?.name || data.name;
 

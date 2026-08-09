@@ -5,14 +5,15 @@ const Register = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false); // লোডিং স্টেট যুক্ত করা হলো
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleRegister = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await fetch('https://campuscare-backend-2166.onrender.com/api/auth/register', {
+            const API_URL = import.meta.env.VITE_API_URL || 'https://campuscare-backend-2l66.onrender.com';
+            const res = await fetch(`${API_URL}/api/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, password })
